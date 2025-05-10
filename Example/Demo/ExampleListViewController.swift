@@ -1,12 +1,12 @@
 import UIKit
 
-enum ExampleType:CaseIterable, CustomStringConvertible {
-    
+enum ExampleType: CaseIterable, CustomStringConvertible {
+
     case basic
     case withURL
     case withUIImages
     case withURLs
-    
+
     var description: String {
         switch self {
             case .basic:
@@ -19,8 +19,8 @@ enum ExampleType:CaseIterable, CustomStringConvertible {
                 return "With [URL]"
         }
     }
-    
-    var viewController:UIViewController {
+
+    var viewController: UIViewController {
         switch self {
             case .basic:
                 return BasicViewController()
@@ -34,29 +34,29 @@ enum ExampleType:CaseIterable, CustomStringConvertible {
     }
 }
 
-class ExampleListViewController:UITableViewController {
-    
-    var items:[ExampleType] = ExampleType.allCases
-    
+class ExampleListViewController: UITableViewController {
+
+    var items: [ExampleType] = ExampleType.allCases
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "ImageViewer.swift"
     }
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+
     override func tableView(
         _ tableView: UITableView, numberOfRowsInSection section: Int)
         -> Int {
         return items.count
     }
-    
+
     override func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         let itemReuseId = "item_reuse_identifier"
         var cell = tableView.dequeueReusableCell(withIdentifier: itemReuseId)
         if cell == nil {
@@ -65,13 +65,12 @@ class ExampleListViewController:UITableViewController {
         cell?.textLabel?.text = items[indexPath.row].description
         return cell!
     }
-    
-    
+
     override func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath) {
         let vc = items[indexPath.row].viewController
-        
+
         switch indexPath.row {
             case 0:
                 present(vc, animated: true, completion: nil)
