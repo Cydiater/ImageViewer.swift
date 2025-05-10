@@ -94,7 +94,7 @@ extension WithURLsViewController: UICollectionViewDataSource {
             urls: Data.imageUrls,
             initialIndex: indexPath.item,
             options: [
-                .theme(.dark),
+                .theme(.automatic),
                 .rightNavItemTitle("Info", onTap: { i in
                     print("TAPPED", i)
                 })

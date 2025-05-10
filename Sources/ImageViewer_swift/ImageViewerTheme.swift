@@ -22,3 +22,8 @@ public enum ImageViewerTheme {
         }
     }
 }
+
+public enum ImageViewerThemeOption {
+    case automatic
+    case fixed(ImageViewerTheme)
+}
