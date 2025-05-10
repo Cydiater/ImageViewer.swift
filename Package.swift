@@ -12,7 +12,7 @@ let package = Package(
             targets: ["ImageViewer_swift"])
 	],
     dependencies: [
-        .package(url: "https://github.com/SDWebImage/SDWebImage", .upToNextMajor(from: "5.11.0")),
+        .package(url: "https://github.com/SDWebImage/SDWebImage", .upToNextMajor(from: "5.11.0"))
     ],
 	targets: [
 		.target(

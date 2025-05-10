@@ -9,21 +9,21 @@ import Foundation
 import UIKit
 
 protocol ImageViewerTransitionViewControllerConvertible {
-    
+
     // The source view
     var sourceView: UIImageView? { get }
-    
+
     // The final view
     var targetView: UIImageView? { get }
 }
 
-final class ImageViewerTransitionPresentationAnimator:NSObject {
-    
+final class ImageViewerTransitionPresentationAnimator: NSObject {
+
     let isPresenting: Bool
     let imageContentMode: UIView.ContentMode
 
     var observation: NSKeyValueObservation?
-    
+
     init(isPresenting: Bool, imageContentMode: UIView.ContentMode) {
         self.isPresenting = isPresenting
         self.imageContentMode = imageContentMode
@@ -38,14 +38,14 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
         -> TimeInterval {
             return 0.3
     }
-    
+
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         let key: UITransitionContextViewControllerKey = isPresenting ? .to : .from
         guard let controller = transitionContext.viewController(forKey: key)
             else { return }
-        
+
         let animationDuration = transitionDuration(using: transitionContext)
-        
+
         if isPresenting {
             presentAnimation(
                 transitionView: transitionContext.containerView,
@@ -53,7 +53,7 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
                 duration: animationDuration) { finished in
                     transitionContext.completeTransition(finished)
             }
-             
+
         } else {
             dismissAnimation(
                 transitionView: transitionContext.containerView,
@@ -63,47 +63,47 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
             }
         }
     }
-    
-    private func createDummyImageView(frame: CGRect, image:UIImage? = nil)
+
+    private func createDummyImageView(frame: CGRect, image: UIImage? = nil)
         -> UIImageView {
-            let dummyImageView:UIImageView = UIImageView(frame: frame)
+            let dummyImageView: UIImageView = UIImageView(frame: frame)
             dummyImageView.clipsToBounds = true
             dummyImageView.contentMode = imageContentMode
             dummyImageView.alpha = 1.0
             dummyImageView.image = image
             return dummyImageView
     }
-    
+
     private func presentAnimation(
-        transitionView:UIView,
+        transitionView: UIView,
         controller: UIViewController,
         duration: TimeInterval,
-        completed: @escaping((Bool) -> Void)) {
+        completed: @escaping ((Bool) -> Void)) {
 
         guard
             let transitionVC = controller as? ImageViewerTransitionViewControllerConvertible,
             let sourceView = transitionVC.sourceView
         else { return }
-    
+
         sourceView.alpha = 0.0
         controller.view.alpha = 0.0
-        
+
         transitionView.addSubview(controller.view)
         transitionVC.targetView?.alpha = 0.0
         transitionVC.targetView?.tintColor = sourceView.tintColor
-        
+
         let dummyImageView = createDummyImageView(
             frame: sourceView.frameRelativeToWindow(),
             image: sourceView.image)
         dummyImageView.contentMode = .scaleAspectFit
         dummyImageView.tintColor = sourceView.tintColor
         transitionView.addSubview(dummyImageView)
-        
+
         UIView.animate(withDuration: duration, animations: {
             dummyImageView.frame = UIScreen.main.bounds
             controller.view.alpha = 1.0
         }) { [weak self] finished in
-            self?.observation = transitionVC.targetView?.observe(\.image, options: [.new, .initial]) { img, change in
+            self?.observation = transitionVC.targetView?.observe(\.image, options: [.new, .initial]) { img, _ in
                 if img.image != nil {
                     transitionVC.targetView?.alpha = 1.0
                     dummyImageView.removeFromSuperview()
@@ -112,27 +112,27 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
             }
         }
     }
-    
+
     private func dismissAnimation(
-        transitionView:UIView,
+        transitionView: UIView,
         controller: UIViewController,
-        duration:TimeInterval,
-        completed: @escaping((Bool) -> Void)) {
-        
+        duration: TimeInterval,
+        completed: @escaping ((Bool) -> Void)) {
+
         guard
             let transitionVC = controller as? ImageViewerTransitionViewControllerConvertible
         else { return }
-  
+
         let sourceView = transitionVC.sourceView
         let targetView = transitionVC.targetView
-        
+
         let dummyImageView = createDummyImageView(
             frame: targetView?.frameRelativeToWindow() ?? UIScreen.main.bounds,
             image: targetView?.image)
         dummyImageView.tintColor = sourceView?.tintColor
         transitionView.addSubview(dummyImageView)
         targetView?.isHidden = true
-      
+
         controller.view.alpha = 1.0
         UIView.animate(withDuration: duration, animations: {
             if let sourceView = sourceView {
@@ -152,14 +152,14 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
 }
 
 final class ImageViewerTransitionPresentationController: UIPresentationController {
-    
+
     override var frameOfPresentedViewInContainerView: CGRect {
         var frame: CGRect = .zero
         frame.size = size(forChildContentContainer: presentedViewController,
                           withParentContainerSize: containerView!.bounds.size)
         return frame
     }
-    
+
     override func containerViewWillLayoutSubviews() {
         presentedView?.frame = frameOfPresentedViewInContainerView
     }
@@ -167,11 +167,11 @@ final class ImageViewerTransitionPresentationController: UIPresentationControlle
 
 final class ImageViewerTransitionPresentationManager: NSObject {
     private let imageContentMode: UIView.ContentMode
-    
+
     public init(imageContentMode: UIView.ContentMode) {
         self.imageContentMode = imageContentMode
     }
-    
+
 }
 
 // MARK: - UIViewControllerTransitioningDelegate
@@ -186,16 +186,16 @@ extension ImageViewerTransitionPresentationManager: UIViewControllerTransitionin
             presenting: presenting)
         return presentationController
     }
-    
+
     func animationController(
         forPresented presented: UIViewController,
         presenting: UIViewController,
         source: UIViewController
     ) -> UIViewControllerAnimatedTransitioning? {
- 
+
         return ImageViewerTransitionPresentationAnimator(isPresenting: true, imageContentMode: imageContentMode)
     }
-    
+
     func animationController(
         forDismissed dismissed: UIViewController
     ) -> UIViewControllerAnimatedTransitioning? {
@@ -205,14 +205,14 @@ extension ImageViewerTransitionPresentationManager: UIViewControllerTransitionin
 
 // MARK: - UIAdaptivePresentationControllerDelegate
 extension ImageViewerTransitionPresentationManager: UIAdaptivePresentationControllerDelegate {
-    
+
     func adaptivePresentationStyle(
         for controller: UIPresentationController,
         traitCollection: UITraitCollection
     ) -> UIModalPresentationStyle {
         return .none
     }
-    
+
     func presentationController(
         _ controller: UIPresentationController,
         viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle
