@@ -98,9 +98,9 @@ extension ImageViewerTransitionPresentationAnimator: UIViewControllerAnimatedTra
         dummyImageView.contentMode = .scaleAspectFit
         dummyImageView.tintColor = sourceView.tintColor
         transitionView.addSubview(dummyImageView)
-
+            
         UIView.animate(withDuration: duration, animations: {
-            dummyImageView.frame = UIScreen.main.bounds
+            dummyImageView.frame = transitionView.safeAreaLayoutGuide.layoutFrame
             controller.view.alpha = 1.0
         }) { [weak self] finished in
             self?.observation = transitionVC.targetView?.observe(\.image, options: [.new, .initial]) { img, _ in

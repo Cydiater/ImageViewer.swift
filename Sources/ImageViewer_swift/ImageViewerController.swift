@@ -57,12 +57,9 @@ UIGestureRecognizerDelegate {
         scrollView = UIScrollView()
         scrollView.delegate = self
         scrollView.showsVerticalScrollIndicator = false
-
-        if #available(iOS 11.0, *) {
-            scrollView.contentInsetAdjustmentBehavior = .never
-        } else {
-            // Fallback on earlier versions
-        }
+        
+        scrollView.contentInsetAdjustmentBehavior = .never
+        
         view.addSubview(scrollView)
         scrollView.bindFrameToSuperview()
         scrollView.backgroundColor = .clear
@@ -117,8 +114,11 @@ UIGestureRecognizerDelegate {
     }
 
     private func layout() {
-        updateConstraintsForSize(view.bounds.size)
-        updateMinMaxZoomScaleForSize(view.bounds.size)
+        var sizeWithoutSafeAreaInsets = view.bounds.size
+        sizeWithoutSafeAreaInsets.height -= view.safeAreaInsets.top + view.safeAreaInsets.bottom
+        sizeWithoutSafeAreaInsets.width -= view.safeAreaInsets.left + view.safeAreaInsets.right
+        updateConstraintsForSize(sizeWithoutSafeAreaInsets)
+        updateMinMaxZoomScaleForSize(sizeWithoutSafeAreaInsets)
     }
 
     // MARK: Add Gesture Recognizers
@@ -220,7 +220,6 @@ UIGestureRecognizerDelegate {
 extension ImageViewerController {
 
     func updateMinMaxZoomScaleForSize(_ size: CGSize) {
-
         let targetSize = imageView.bounds.size
         if targetSize.width == 0 || targetSize.height == 0 {
             return
@@ -253,8 +252,8 @@ extension ImageViewerController {
 
     func updateConstraintsForSize(_ size: CGSize) {
         let yOffset = max(0, (size.height - imageView.frame.height) / 2)
-        top.constant = yOffset
-        bottom.constant = yOffset
+        top.constant = yOffset + view.safeAreaInsets.top
+        bottom.constant = yOffset + view.safeAreaInsets.bottom
 
         let xOffset = max(0, (size.width - imageView.frame.width) / 2)
         leading.constant = xOffset
@@ -287,6 +286,9 @@ extension ImageViewerController: UIScrollViewDelegate {
     }
 
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        updateConstraintsForSize(view.bounds.size)
+        var sizeWithoutSafeAreaInsets = view.bounds.size
+        sizeWithoutSafeAreaInsets.height -= view.safeAreaInsets.top + view.safeAreaInsets.bottom
+        sizeWithoutSafeAreaInsets.width -= view.safeAreaInsets.left + view.safeAreaInsets.right
+        updateConstraintsForSize(sizeWithoutSafeAreaInsets)
     }
 }
