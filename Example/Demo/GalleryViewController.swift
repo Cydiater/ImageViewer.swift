@@ -87,7 +87,10 @@ extension WithImagesViewController: UICollectionViewDataSource {
         // Setup Image Viewer with [UIImage]
         cell.imageView.setupImageViewer(
             images: images,
-            initialIndex: indexPath.item)
+            initialIndex: indexPath.item, options: [.rightNavItemIcon(UIImage(systemName: "ellipsis")!) { idx, viewController in
+                let activityViewController = UIActivityViewController(activityItems: [self.images[idx]], applicationActivities: nil)
+                viewController.present(activityViewController, animated: true)
+            }])
 
         return cell
     }

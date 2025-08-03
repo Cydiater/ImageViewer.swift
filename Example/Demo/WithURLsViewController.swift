@@ -1,6 +1,5 @@
 import UIKit
 import ImageViewer_swift
-import SDWebImage
 
 class WithURLsViewController: UIViewController {
 
@@ -45,7 +44,6 @@ class WithURLsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Gallery"
-        SDImageCache.shared.clear(with: .all, completion: nil)
     }
 
     override func viewWillLayoutSubviews() {
@@ -95,7 +93,7 @@ extension WithURLsViewController: UICollectionViewDataSource {
             initialIndex: indexPath.item,
             options: [
                 .theme(.automatic),
-                .rightNavItemTitle("Info", onTap: { i in
+                .rightNavItemTitle("Info", onTap: { (i, _) in
                     print("TAPPED", i)
                 })
             ],

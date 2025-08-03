@@ -53,7 +53,7 @@ public class ImageCarouselViewController: UIPageViewController, ImageViewerTrans
     var imageContentMode: UIView.ContentMode = .scaleAspectFill
     var options: [ImageViewerOption] = []
 
-    private var onRightNavBarTapped: ((Int) -> Void)?
+    private var onRightNavBarTapped: ((Int, UIViewController) -> Void)?
 
     private(set) lazy var navBar: UINavigationBar = {
         let _navBar = UINavigationBar(frame: .zero)
@@ -203,7 +203,7 @@ public class ImageCarouselViewController: UIPageViewController, ImageViewerTrans
         guard let onTap = onRightNavBarTapped,
               let _firstVC = viewControllers?.first as? ImageViewerController
         else { return }
-        onTap(_firstVC.index)
+        onTap(_firstVC.index, self)
     }
 
     override public var preferredStatusBarStyle: UIStatusBarStyle {
