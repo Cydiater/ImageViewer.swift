@@ -1,5 +1,7 @@
 import UIKit
 
+let symbolConfiguration = UIImage.SymbolConfiguration(paletteColors: [.label, .systemBackground])
+
 public protocol ImageDataSource: AnyObject {
     func numberOfImages() -> Int
     func imageItem(at index: Int) -> ImageItem
@@ -40,7 +42,6 @@ public class ImageCarouselViewController: UIPageViewController, ImageViewerTrans
     }
 
     func themeOptionOrUserInterfaceStyleDidUpdate() {
-        navItem.leftBarButtonItem?.tintColor = theme.tintColor
         backgroundView?.backgroundColor = theme.color
     }
 
@@ -152,7 +153,7 @@ public class ImageCarouselViewController: UIPageViewController, ImageViewerTrans
             case .contentMode(let contentMode):
                 self.imageContentMode = contentMode
             case .closeIcon(let icon):
-                navItem.leftBarButtonItem?.image = icon
+                navItem.leftBarButtonItem?.image = icon.applyingSymbolConfiguration(symbolConfiguration)
             case .rightNavItemTitle(let title, let onTap):
                 navItem.rightBarButtonItem = UIBarButtonItem(
                     title: title,
@@ -162,7 +163,7 @@ public class ImageCarouselViewController: UIPageViewController, ImageViewerTrans
                 onRightNavBarTapped = onTap
             case .rightNavItemIcon(let icon, let onTap):
                 navItem.rightBarButtonItem = UIBarButtonItem(
-                    image: icon,
+                    image: icon.applyingSymbolConfiguration(symbolConfiguration),
                     style: .plain,
                     target: self,
                     action: #selector(diTapRightNavBarItem(_:)))
