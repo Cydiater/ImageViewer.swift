@@ -1,10 +1,10 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
     name: "ImageViewer_swift",
 	platforms: [
-		.iOS(.v10)
+        .iOS(.v15)
 	],
     products: [
         .library(
@@ -12,12 +12,11 @@ let package = Package(
             targets: ["ImageViewer_swift"])
 	],
     dependencies: [
-        .package(url: "https://github.com/SDWebImage/SDWebImage", .upToNextMajor(from: "5.11.0")),
     ],
 	targets: [
 		.target(
 			name: "ImageViewer_swift",
-			dependencies: ["SDWebImage"],
+			dependencies: [],
 			path: "Sources/ImageViewer_swift")
 	]
 )
